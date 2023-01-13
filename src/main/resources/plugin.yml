@@ -1,0 +1,21 @@
+name: VariousEnchantments
+version: '${project.version}'
+main: ru.dodabyte.variousenchantments.VariousEnchantmentsMain
+api-version: 1.19
+authors: [ dodabyte ]
+description: The plugin adds many new enchantments to weapons and tools.
+website: https://github.com/dodabyte
+commands:
+  variousenchantments:
+    aliases:
+      - ves
+    description: "General information about the plugin."
+  variousenchant:
+    aliases:
+      - ve
+      - venchant
+    description: "Enchant the item that is in the main hand."
+  variousenchantgui:
+    aliases:
+      - veg
+    description: "Open the Enchantment menu."

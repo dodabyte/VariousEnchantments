@@ -1,0 +1,45 @@
+enchantment:
+  name: '&6Display Name: &f'
+  description: '&6Description: &f'
+  descriptions:
+    various_enchantments:
+      bleeding: 'After hitting the enemy, it causes bleeding.'
+      spectral: 'Confers the Glowing status effect for 10 seconds.'
+      beheading: "With a certain chance, the enemy's head may fall out."
+      daze: 'Confuses the enemy and turns his back to you.'
+      ender: 'Allows you to teleport directly behind the arrow'
+      explosion: 'The released arrow explodes upon landing.'
+      lightning: 'The released arrow calls to itself a hail of lightning.'
+      jumping: 'Allows you to jump high.'
+      speed: 'Allows you to run fast.'
+  max-level: '&6Max Level: &f'
+  display_names:
+    various_enchantments:
+      bleeding: 'Bleeding'
+      spectral: 'Spectral'
+      beheading: 'Beheading'
+      daze: 'Daze'
+      ender: 'Ender'
+      explosion: 'Explosion'
+      lightning: 'Lightning'
+      jumping: 'Jumping'
+      speed: 'Speed'
+help:
+  ve_help_list: 'VariousEnchantments Help'
+  help_command: 'Calling help to the plugin.'
+  list_command: 'Calling the enchantments list.'
+  enchant_command: 'Enchant the item that is in the main hand.'
+  enchant_gui_command: 'Open the Enchantment menu.'
+list:
+  ve_enchantments_list: 'VariousEnchantments List'
+errors:
+  enter_name_enchantment: 'Enter the name of the enchantment.'
+  unknown_level_argument: 'Unknown arguments for the enchantment level have been introduced.'
+  invalid_argument: 'Invalid argument for the command'
+  air_in_main_hand: 'There must be an item in the main hand that you want to enchant.'
+  max_level: 'The selected enchantment level is greater than the possible maximum level.'
+  cannot_enchant: 'This item cannot be enchanted with this enchantment.'
+  already_enchantment_level: 'This item already has this enchantment with this level.'
+  no_such_enchantment: 'There is no such enchantment.'
+success:
+  reloaded: 'The plugin config has been successfully reloaded.'
