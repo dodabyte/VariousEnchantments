@@ -8,9 +8,9 @@ To work with the plugin in the game, you need to enter the command `/variousench
 
 `/variousenchantments help`: Calling help to the plugin.    
 `/variousenchantments list`: Opens the list of enchantments.  
-`/variousenchantments reload`: Reload the plugin settings.
-`/variousenchantgui`: Opens the enchantment inventory.
-`/variousenchant`: Enchants the item in the main hand to the specified enchantment and level.
+`/variousenchantments reload`: Reload the plugin settings.  
+`/variousenchantgui`: Opens the enchantment inventory.  
+`/variousenchant`: Enchants the item in the main hand to the specified enchantment and level. 
 
 ### Server Compatibility
 
