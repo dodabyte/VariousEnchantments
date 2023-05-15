@@ -37,7 +37,8 @@ public class ItemsToEnchantMenu extends PaginatedMenu {
 
             ItemStack clickedItem = event.getCurrentItem();
             if (event.getCurrentItem() != null && (EnchantmentTarget.WEAPON.includes(clickedItem) ||
-                    EnchantmentTarget.ARMOR.includes(clickedItem) || EnchantmentTarget.BOW.includes(clickedItem))) {
+                    EnchantmentTarget.ARMOR.includes(clickedItem) || EnchantmentTarget.BOW.includes(clickedItem) ||
+                    EnchantmentTarget.TOOL.includes(clickedItem))) {
                 new EnchantmentsMenu(player, clickedItem).open();
             } else if (event.getCurrentItem().getType().equals(Material.BARRIER)) {
                 player.closeInventory();

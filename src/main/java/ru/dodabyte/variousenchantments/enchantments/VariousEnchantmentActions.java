@@ -1,8 +1,6 @@
 package ru.dodabyte.variousenchantments.enchantments;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -11,15 +9,13 @@ import org.bukkit.scheduler.BukkitTask;
 import ru.dodabyte.variousenchantments.VariousEnchantmentsMain;
 import ru.dodabyte.variousenchantments.actions.Arrows;
 import ru.dodabyte.variousenchantments.actions.TeleportArrow;
+import ru.dodabyte.variousenchantments.tasks.AdvanceHeal;
 import ru.dodabyte.variousenchantments.tasks.BleedOut;
 import ru.dodabyte.variousenchantments.tasks.JumpingBoost;
 import ru.dodabyte.variousenchantments.tasks.SpeedBoost;
 import ru.dodabyte.variousenchantments.utils.EnchantmentUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class VariousEnchantmentActions {
 
@@ -27,7 +23,9 @@ public class VariousEnchantmentActions {
     public static Map<UUID, BukkitTask> bleedOutPlayers = new HashMap<>();
     public static Map<UUID, BukkitTask> jumpingBoostEntities = new HashMap<>();
     public static Map<UUID, BukkitTask> speedBoostEntities = new HashMap<>();
+    public static Map<UUID, BukkitTask> advanceHealEntities = new HashMap<>();
     public static boolean isTeleported = false;
+    public static Map<UUID, Arrow> arrowMap = new HashMap<>();
 
     public static void createWeaponHitActions(LivingEntity victim, ItemStack item) {
         // Bleeding enchantment
@@ -110,6 +108,40 @@ public class VariousEnchantmentActions {
         }
     }
 
+    public static void createHoeActionsOnShoot(LivingEntity livingEntity, ItemStack item) {
+        // Hook enchantment
+        if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.HOOK)) {
+            Player player = (Player) livingEntity;
+            Arrow arrow = player.launchProjectile(Arrow.class, player.getLocation().getDirection().multiply(3));
+            arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+            arrow.setDamage(0);
+            arrowMap.put(arrow.getUniqueId(), arrow);
+        }
+    }
+
+    public static void createHoeActionsOnArrowHit(LivingEntity livingEntity, Entity arrow, ItemStack item, Entity hitEntity) {
+        // Hook enchantment
+        if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.HOOK)) {
+            if (arrowMap.containsKey(arrow.getUniqueId())) {
+                if (hitEntity != null && hitEntity.getLocation() != livingEntity.getLocation()) {
+                        Bukkit.getScheduler().runTaskTimer(VariousEnchantmentsMain.getProvidingPlugin(VariousEnchantmentsMain.class), (task) -> {
+                            if (hitEntity.getLocation().getBlock().getLocation().distance(livingEntity.getLocation().getBlock().getLocation()) <= 3) task.cancel();
+                            Location entityLocation = hitEntity.getLocation();
+                            if (hitEntity.getLocation().getX() < livingEntity.getLocation().getX()) entityLocation.setX(entityLocation.getX() + 1);
+                            else if (hitEntity.getLocation().getX() > livingEntity.getLocation().getX()) entityLocation.setX(entityLocation.getX() - 1);
+                            if (hitEntity.getLocation().getY() < livingEntity.getLocation().getY()) entityLocation.setY(entityLocation.getY() + 1);
+                            else if (hitEntity.getLocation().getY() > livingEntity.getLocation().getY()) entityLocation.setY(entityLocation.getY() - 1);
+                            if (hitEntity.getLocation().getZ() < livingEntity.getLocation().getZ()) entityLocation.setZ(entityLocation.getZ() + 1);
+                            else if (hitEntity.getLocation().getZ() > livingEntity.getLocation().getZ()) entityLocation.setZ(entityLocation.getZ() - 1);
+                            hitEntity.teleport(entityLocation);
+                        }, 0L, 1L);
+                }
+                arrowMap.remove(arrow.getUniqueId());
+                arrow.remove();
+            }
+        }
+    }
+
     public static void createBowActionsOnShoot(LivingEntity livingEntity, Entity arrow, ItemStack item) {
         try {
             // Ender enchantment
@@ -125,6 +157,8 @@ public class VariousEnchantmentActions {
     public static void createBowActionsOnArrowHit(LivingEntity livingEntityShooter, Entity arrow, ItemStack item) {
         // Ender enchantment
         if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.ENDER)) {
+            livingEntityShooter.getWorld().playSound(arrow.getLocation(),
+                    Sound.ENTITY_ENDERMAN_TELEPORT, 10, 10);
             Arrows.getEnderArrowMap().remove(arrow.getUniqueId());
             livingEntityShooter.damage(5);
             livingEntityShooter.setFallDistance(1);
@@ -153,15 +187,36 @@ public class VariousEnchantmentActions {
         // Jumping enchantments
         if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.JUMPING)) {
             int level = EnchantmentUtils.getLevel(item, VariousEnchantment.JUMPING);
-            BukkitTask jumpingBoostTask = new JumpingBoost(livingEntity, level).runTaskTimer(VariousEnchantmentsMain.getPlugin(),
-                    0L, 20L);
-            jumpingBoostEntities.put(livingEntity.getUniqueId(), jumpingBoostTask);
+            if (!jumpingBoostEntities.containsKey(livingEntity.getUniqueId())) {
+                BukkitTask jumpingBoostTask = new JumpingBoost(livingEntity, level).runTaskTimer(VariousEnchantmentsMain.getPlugin(),
+                        0L, 20L);
+                jumpingBoostEntities.put(livingEntity.getUniqueId(), jumpingBoostTask);
+            }
         }
+        // Speed enchantments
         if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.SPEED)) {
             int level = EnchantmentUtils.getLevel(item, VariousEnchantment.SPEED);
-            BukkitTask speedBoostTask = new SpeedBoost(livingEntity, level).runTaskTimer(VariousEnchantmentsMain.getPlugin(),
-                    0L, 20L);
-            speedBoostEntities.put(livingEntity.getUniqueId(), speedBoostTask);
+            if (!speedBoostEntities.containsKey(livingEntity.getUniqueId())) {
+                BukkitTask speedBoostTask = new SpeedBoost(livingEntity, level).runTaskTimer(VariousEnchantmentsMain.getPlugin(),
+                        0L, 20L);
+                speedBoostEntities.put(livingEntity.getUniqueId(), speedBoostTask);
+            }
+        }
+    }
+
+    public static void createChestplateActions(LivingEntity livingEntity, ItemStack item) {
+        // Advance Heal enchantments
+        if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.HEAL)) {
+            if (livingEntity instanceof Player) {
+                Player player = (Player) livingEntity;
+                long timeTask = 5L;
+                int level = EnchantmentUtils.getLevel(item, VariousEnchantment.HEAL);
+                if (!advanceHealEntities.containsKey(player.getUniqueId())) {
+                    BukkitTask advanceHealTask = new AdvanceHeal(player, level).runTaskTimer(VariousEnchantmentsMain.getPlugin(),
+                            0L, timeTask * ticksInSecond);
+                    advanceHealEntities.put(player.getUniqueId(), advanceHealTask);
+                }
+            }
         }
     }
 }

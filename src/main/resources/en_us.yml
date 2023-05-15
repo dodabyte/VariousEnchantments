@@ -24,6 +24,8 @@ enchantment:
       lightning: 'Lightning'
       jumping: 'Jumping'
       speed: 'Speed'
+      heal: 'Heal'
+      hook: 'Hook'
 help:
   ve_help_list: 'VariousEnchantments Help'
   help_command: 'Calling help to the plugin.'

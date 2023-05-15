@@ -39,8 +39,6 @@ public class BowEnchantmentsListener implements Listener {
             if (event.getEntity().getShooter() instanceof LivingEntity livingEntityShooter) {
                 ItemStack item = livingEntityShooter.getEquipment().getItemInMainHand();
                 VariousEnchantmentActions.createBowActionsOnArrowHit(livingEntityShooter, event.getEntity(), item);
-                livingEntityShooter.getWorld().playSound(event.getEntity().getLocation(),
-                        Sound.ENTITY_ENDERMAN_TELEPORT, 10, 10);
             }
         }
     }

@@ -2,7 +2,6 @@ package ru.dodabyte.variousenchantments.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.dodabyte.variousenchantments.enchantments.VariousEnchantment;
@@ -35,7 +34,7 @@ public class EnchantmentUtils {
     }
 
     public static boolean possibleEnchant(ItemStack item, Enchantment enchantment) {
-        return enchantment.getItemTarget().includes(item);
+        return enchantment.getItemTarget().includes(item) && enchantment.canEnchantItem(item);
     }
 
     public static void addUnsafeVariousEnchantment(ItemStack item, Enchantment enchantment, int level) {

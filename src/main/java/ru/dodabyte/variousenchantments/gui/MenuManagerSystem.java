@@ -15,7 +15,8 @@ public class MenuManagerSystem {
         for (ItemStack itemInInventory : player.getInventory().getContents()) {
             if (itemInInventory != null && (EnchantmentTarget.ARMOR.includes(itemInInventory) ||
                     EnchantmentTarget.WEAPON.includes(itemInInventory) ||
-                    EnchantmentTarget.BOW.includes(itemInInventory))) {
+                    EnchantmentTarget.BOW.includes(itemInInventory) ||
+                    EnchantmentTarget.TOOL.includes(itemInInventory))) {
                 itemsInInventory.add(itemInInventory);
             }
         }

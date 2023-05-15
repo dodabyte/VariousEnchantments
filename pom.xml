@@ -13,7 +13,7 @@
 
     <description>The plugin adds many new enchantments to weapons and tools.</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>1.20</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <url>https://github.com/dodabyte</url>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>24.0.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

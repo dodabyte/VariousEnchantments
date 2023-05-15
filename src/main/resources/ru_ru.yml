@@ -24,6 +24,8 @@ enchantment:
       lightning: 'Молния'
       jumping: 'Скакун'
       speed: 'Молниеносность'
+      heal: 'Лечение'
+      hook: 'Крюк'
 help:
   ve_help_list: 'VariousEnchantments Помощь'
   help_command: 'Вызов помощи к плагину.'

@@ -3,6 +3,7 @@ package ru.dodabyte.variousenchantments.enchantments;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class VariousEnchantment {
     public static Enchantment BEHEADING = new VariousEnchantmentWrapper("beheading", 3, EnchantmentTarget.WEAPON);
     public static Enchantment DAZE = new VariousEnchantmentWrapper("daze", 3, EnchantmentTarget.WEAPON);
 
+    // Tool enchantments
+    public static Enchantment HOOK = new VariousEnchantmentWrapper("hook", 1, EnchantmentTarget.TOOL, "HOE");
+
     // Bow enchantments
     public static Enchantment ENDER = new VariousEnchantmentWrapper("ender", 1, EnchantmentTarget.BOW);
     public static Enchantment EXPLOSION = new VariousEnchantmentWrapper("explosion", 3, EnchantmentTarget.BOW);
@@ -35,6 +39,9 @@ public class VariousEnchantment {
     public static Enchantment JUMPING = new VariousEnchantmentWrapper("jumping", 3, EnchantmentTarget.ARMOR_FEET);
     public static Enchantment SPEED = new VariousEnchantmentWrapper("speed", 3, EnchantmentTarget.ARMOR_FEET);
 
+    // Chestplate enchantments
+    public static Enchantment HEAL = new VariousEnchantmentWrapper("heal", 1, EnchantmentTarget.ARMOR_TORSO);
+
     public static void addEnchantments() {
         if (getEnchantments().size() > 0) return;
         getEnchantments().addAll(Arrays.asList(
@@ -42,11 +49,13 @@ public class VariousEnchantment {
                 SPECTRAL,
                 BEHEADING,
                 DAZE,
+                HOOK,
                 ENDER,
                 EXPLOSION,
                 LIGHTNING,
                 JUMPING,
-                SPEED
+                SPEED,
+                HEAL
         ));
     }
 

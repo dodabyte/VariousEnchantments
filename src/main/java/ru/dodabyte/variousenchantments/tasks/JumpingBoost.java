@@ -18,7 +18,7 @@ public class JumpingBoost extends BukkitRunnable {
 
     @Override
     public void run() {
-        livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2, power - 1, false, false, false));
+        livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20, power - 1, false, false, false));
         if (livingEntity.getEquipment().getBoots() == null) {
             VariousEnchantmentActions.jumpingBoostEntities.remove(livingEntity.getUniqueId());
             this.cancel();

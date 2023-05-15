@@ -1,5 +1,6 @@
 package ru.dodabyte.variousenchantments.enchantments;
 
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -13,6 +14,7 @@ public class VariousEnchantmentWrapper extends Enchantment {
     private final String name;
     private int maxLevel = 0;
     private final EnchantmentTarget itemTarget;
+    private String itemType;
     private boolean isTreasure = false, isCursed = false;
 
     public VariousEnchantmentWrapper(String namespace, int maxLevel,
@@ -24,6 +26,15 @@ public class VariousEnchantmentWrapper extends Enchantment {
         this.itemTarget = itemTarget;
         this.isTreasure = isTreasure;
         this.isCursed = isCursed;
+    }
+
+    public VariousEnchantmentWrapper(String namespace, int maxLevel, EnchantmentTarget itemTarget, String itemType) {
+        super(new NamespacedKey(VariousEnchantmentsMain.getPlugin(), namespace));
+        this.name = Configurations.getLanguage().translate(
+                "enchantment.display_names.various_enchantments." + namespace);
+        this.maxLevel = maxLevel;
+        this.itemTarget = itemTarget;
+        this.itemType = itemType;
     }
 
     public VariousEnchantmentWrapper(String namespace, int maxLevel, EnchantmentTarget itemTarget) {
@@ -82,7 +93,9 @@ public class VariousEnchantmentWrapper extends Enchantment {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
-        return getVariousEnchantment().canEnchantItem(item);
+        if (getItemType() == null) return true;
+        else return item.getType().name().contains(getItemType());
+        //getVariousEnchantment().canEnchantItem(item);
     }
 
     @NotNull
@@ -100,4 +113,6 @@ public class VariousEnchantmentWrapper extends Enchantment {
         word = word.replaceAll(" ", "_");
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
+
+    public String getItemType() { return itemType; }
 }

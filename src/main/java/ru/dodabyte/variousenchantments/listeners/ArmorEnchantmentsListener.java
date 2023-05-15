@@ -22,10 +22,17 @@ public class ArmorEnchantmentsListener implements Listener {
 
     public static void activatingPassiveEnchantments() {
         for (LivingEntity player : playersList) {
-            VariousEnchantmentActions.createBootsActions(player, player.getEquipment().getBoots());
+            if (player.getEquipment().getChestplate() != null) {
+                VariousEnchantmentActions.createChestplateActions(player, player.getEquipment().getChestplate());
+            }
+            if (player.getEquipment().getBoots() != null) {
+                VariousEnchantmentActions.createBootsActions(player, player.getEquipment().getBoots());
+            }
         }
         for (LivingEntity mob : mobsList) {
-            VariousEnchantmentActions.createBootsActions(mob, mob.getEquipment().getBoots());
+            if (mob.getEquipment().getBoots() != null) {
+                VariousEnchantmentActions.createBootsActions(mob, mob.getEquipment().getBoots());
+            }
         }
     }
 
