@@ -1,7 +1,6 @@
 package ru.dodabyte.variousenchantments.listeners;
 
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -24,21 +23,22 @@ public class BowEnchantmentsListener implements Listener {
     // Launching actions from enchantments when shooting a bow
     @EventHandler
     public void onBowShoot(EntityShootBowEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-        ItemStack item = livingEntity.getEquipment().getItemInMainHand();
-        if (!item.getType().equals(Material.BOW)) {
-            item = livingEntity.getEquipment().getItemInOffHand();
+        if (event.getProjectile() instanceof Arrow arrow) {
+            LivingEntity livingEntity = event.getEntity();
+            ItemStack item = livingEntity.getEquipment().getItemInMainHand();
+            if (!item.getType().equals(Material.BOW)) {
+                item = livingEntity.getEquipment().getItemInOffHand();
+            }
+            VariousEnchantmentActions.createBowActionsOnShoot(livingEntity, arrow, item);
         }
-        VariousEnchantmentActions.createBowActionsOnShoot(livingEntity, event.getProjectile(), item);
     }
 
     // Launching actions from enchantments when an arrow hits somewhere
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        if (event.getEntity() instanceof Arrow) {
+        if (event.getEntity() instanceof Arrow arrow) {
             if (event.getEntity().getShooter() instanceof LivingEntity livingEntityShooter) {
-                ItemStack item = livingEntityShooter.getEquipment().getItemInMainHand();
-                VariousEnchantmentActions.createBowActionsOnArrowHit(livingEntityShooter, event.getEntity(), item);
+                VariousEnchantmentActions.createBowActionsOnArrowHit(livingEntityShooter, arrow, event.getHitBlock());
             }
         }
     }
@@ -49,7 +49,9 @@ public class BowEnchantmentsListener implements Listener {
         if (!event.hasItem()) return;
         if ((event.getAction() != Action.RIGHT_CLICK_AIR) && (event.getAction() != Action.RIGHT_CLICK_BLOCK)) return;
 
-        if (VariousEnchantmentActions.isTeleported) {
+        if (VariousEnchantmentActions.teleportedEntitiesMap != null &&
+                VariousEnchantmentActions.teleportedEntitiesMap.containsKey(event.getPlayer().getUniqueId()) &&
+                VariousEnchantmentActions.teleportedEntitiesMap.get(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }
@@ -57,7 +59,9 @@ public class BowEnchantmentsListener implements Listener {
     // Prohibition on changing the item in the main hand
     @EventHandler
     public void onChangeItemInMainHandLock(PlayerItemHeldEvent event) {
-        if (VariousEnchantmentActions.isTeleported) {
+        if (VariousEnchantmentActions.teleportedEntitiesMap != null &&
+                VariousEnchantmentActions.teleportedEntitiesMap.containsKey(event.getPlayer().getUniqueId()) &&
+                VariousEnchantmentActions.teleportedEntitiesMap.get(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }
@@ -65,7 +69,9 @@ public class BowEnchantmentsListener implements Listener {
     // Prohibition on replacing the bow with another item in the inventory
     @EventHandler
     public void onChangeItemInInventory(InventoryClickEvent event) {
-        if (VariousEnchantmentActions.isTeleported) {
+        if (VariousEnchantmentActions.teleportedEntitiesMap != null &&
+                VariousEnchantmentActions.teleportedEntitiesMap.containsKey(event.getWhoClicked().getUniqueId()) &&
+                VariousEnchantmentActions.teleportedEntitiesMap.get(event.getWhoClicked().getUniqueId())) {
             Player player = (Player) event.getWhoClicked();
             if (event.getHotbarButton() != -1) {
                 ItemStack item = player.getInventory().getContents()[event.getHotbarButton()];
@@ -76,10 +82,8 @@ public class BowEnchantmentsListener implements Listener {
 
             ItemStack item = event.getCurrentItem();
             ItemStack cursorItem = event.getCursor();
-            if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.ENDER)) {
-                event.setCancelled(true);
-            }
-            if (EnchantmentUtils.hasEnchantment(cursorItem, VariousEnchantment.ENDER)) {
+            if (EnchantmentUtils.hasEnchantment(item, VariousEnchantment.ENDER) ||
+                    EnchantmentUtils.hasEnchantment(cursorItem, VariousEnchantment.ENDER)) {
                 event.setCancelled(true);
             }
         }
@@ -88,7 +92,9 @@ public class BowEnchantmentsListener implements Listener {
     // Prohibition on changing items in the main and secondary hands
     @EventHandler
     public void onSwapItemInHandsLock(PlayerSwapHandItemsEvent event) {
-        if (VariousEnchantmentActions.isTeleported) {
+        if (VariousEnchantmentActions.teleportedEntitiesMap != null &&
+                VariousEnchantmentActions.teleportedEntitiesMap.containsKey(event.getPlayer().getUniqueId()) &&
+                VariousEnchantmentActions.teleportedEntitiesMap.get(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }

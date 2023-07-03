@@ -1,6 +1,5 @@
 package ru.dodabyte.variousenchantments.enchantments;
 
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -9,19 +8,21 @@ import org.jetbrains.annotations.NotNull;
 import ru.dodabyte.variousenchantments.VariousEnchantmentsMain;
 import ru.dodabyte.variousenchantments.utils.config.Configurations;
 
-public class VariousEnchantmentWrapper extends Enchantment {
+import java.util.List;
 
+public class VariousEnchantmentWrapper extends Enchantment {
     private final String name;
-    private int maxLevel = 0;
+    private final String description;
+    private int maxLevel = 1;
     private final EnchantmentTarget itemTarget;
     private String itemType;
     private boolean isTreasure = false, isCursed = false;
 
-    public VariousEnchantmentWrapper(String namespace, int maxLevel,
-                                     EnchantmentTarget itemTarget, boolean isTreasure, boolean isCursed) {
+    public VariousEnchantmentWrapper(String namespace, int maxLevel, EnchantmentTarget itemTarget,
+                                     boolean isTreasure, boolean isCursed) {
         super(new NamespacedKey(VariousEnchantmentsMain.getPlugin(), namespace));
-        this.name = Configurations.getLanguage().translate(
-                "enchantment.display_names.various_enchantments." + namespace);
+        this.name = Configurations.getLanguage().getEnchantmentName(namespace);
+        this.description = Configurations.getLanguage().getEnchantmentDescription(namespace);
         this.maxLevel = maxLevel;
         this.itemTarget = itemTarget;
         this.isTreasure = isTreasure;
@@ -30,8 +31,8 @@ public class VariousEnchantmentWrapper extends Enchantment {
 
     public VariousEnchantmentWrapper(String namespace, int maxLevel, EnchantmentTarget itemTarget, String itemType) {
         super(new NamespacedKey(VariousEnchantmentsMain.getPlugin(), namespace));
-        this.name = Configurations.getLanguage().translate(
-                "enchantment.display_names.various_enchantments." + namespace);
+        this.name = Configurations.getLanguage().getEnchantmentName(namespace);
+        this.description = Configurations.getLanguage().getEnchantmentDescription(namespace);
         this.maxLevel = maxLevel;
         this.itemTarget = itemTarget;
         this.itemType = itemType;
@@ -39,17 +40,27 @@ public class VariousEnchantmentWrapper extends Enchantment {
 
     public VariousEnchantmentWrapper(String namespace, int maxLevel, EnchantmentTarget itemTarget) {
         super(new NamespacedKey(VariousEnchantmentsMain.getPlugin(), namespace));
-        this.name = Configurations.getLanguage().translate(
-                "enchantment.display_names.various_enchantments." + namespace);
+        this.name = Configurations.getLanguage().getEnchantmentName(namespace);
+        this.description = Configurations.getLanguage().getEnchantmentDescription(namespace);
         this.maxLevel = maxLevel;
         this.itemTarget = itemTarget;
     }
 
     public VariousEnchantmentWrapper(String namespace, EnchantmentTarget itemTarget) {
         super(new NamespacedKey(VariousEnchantmentsMain.getPlugin(), namespace));
-        this.name = Configurations.getLanguage().translate(
-                "enchantment.display_names.various_enchantments." + namespace);
+        this.name = Configurations.getLanguage().getEnchantmentName(namespace);
+        this.description = Configurations.getLanguage().getEnchantmentDescription(namespace);
         this.itemTarget = itemTarget;
+        this.maxLevel = Configurations.getConfig().getMaxLevel(namespace);
+    }
+
+    public VariousEnchantmentWrapper(String namespace, EnchantmentTarget itemTarget, String itemType) {
+        super(new NamespacedKey(VariousEnchantmentsMain.getPlugin(), namespace));
+        this.name = Configurations.getLanguage().getEnchantmentName(namespace);
+        this.description = Configurations.getLanguage().getEnchantmentDescription(namespace);
+        this.itemTarget = itemTarget;
+        this.maxLevel = Configurations.getConfig().getMaxLevel(namespace);
+        this.itemType = itemType;
     }
 
     @NotNull
@@ -57,6 +68,8 @@ public class VariousEnchantmentWrapper extends Enchantment {
     public String getName() {
         return name;
     }
+
+    public String getDescription() { return description; }
 
     @Override
     public int getMaxLevel() {
@@ -85,17 +98,17 @@ public class VariousEnchantmentWrapper extends Enchantment {
     }
 
     @Override
-    public boolean conflictsWith(@NotNull Enchantment other) {
+    public boolean conflictsWith(@NotNull Enchantment otherEnchantment) {
         Enchantment enchantment = getVariousEnchantment();
-        Enchantment conflictEnchantment = VariousEnchantment.getVariousEnchantment(other);
-        return enchantment != null && conflictEnchantment != null && enchantment.conflictsWith(conflictEnchantment);
+        List<String> conflictsEnchantmentsList = Configurations.getConfig().getConflicts(enchantment.getKey().getKey());
+        return conflictsEnchantmentsList != null && !conflictsEnchantmentsList.contains(otherEnchantment.getKey().getKey());
     }
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
-        if (getItemType() == null) return true;
-        else return item.getType().name().contains(getItemType());
-        //getVariousEnchantment().canEnchantItem(item);
+        Enchantment enchantment = getVariousEnchantment();
+        if (getItemType() == null) return enchantment.getItemTarget().includes(item);
+        else return enchantment.getItemTarget().includes(item) && item.getType().toString().contains(getItemType());
     }
 
     @NotNull
@@ -108,11 +121,18 @@ public class VariousEnchantmentWrapper extends Enchantment {
         return VariousEnchantment.getVariousEnchantment(this);
     }
 
-    public String firstUpperCase(String word){
-        if(word == null || word.isEmpty()) return "";
-        word = word.replaceAll(" ", "_");
-        return word.substring(0, 1).toUpperCase() + word.substring(1);
-    }
+//    public String firstUpperCase(String word){
+//        if(word == null || word.isEmpty()) return "";
+//        word = word.replaceAll(" ", "_");
+//        return word.substring(0, 1).toUpperCase() + word.substring(1);
+//    }
 
     public String getItemType() { return itemType; }
+
+    public String getFormattedType() {
+        if (itemType == null)
+            return getItemTarget().toString();
+        else
+            return itemType;
+    }
 }

@@ -1,21 +1,32 @@
 # VariousEnchantments
+[![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
+[![ru](https://img.shields.io/badge/lang-ru-blue.svg)](README.ru.md)
 
-Spigot plugin adds new enchantments for weapons and armor.
+Spigot plugin adds new enchantments for weapons, tools and armor.
 
-### Usage
+## Documentation
 
-To work with the plugin in the game, you need to enter the command `/variousenchantments` or `/ves`
+This is documentation for VariousEnchantments v1.0 plugin.
+
+### General information
+
+_Coming soon._
+
+### Commands
+
+To work with the plugin in the game, you need to enter the command 
+`/variousenchantments` or `/ves`
 
 `/variousenchantments help`: Calling help to the plugin.    
-`/variousenchantments list`: Opens the list of enchantments.  
+`/variousenchantments list`: Getting a list of enchantments.
 `/variousenchantments reload`: Reload the plugin settings.  
 `/variousenchantgui`: Opens the enchantment inventory.  
 `/variousenchant`: Enchants the item in the main hand to the specified enchantment and level. 
 
+### Configuration file
+
+_Coming soon._
+
 ### Server Compatibility
 
-This plugin is compatible with Spigot. Using CraftBukkit will not work. The versions of Minecraft that are currently supported are 1.19.
-
-### Compilation
-
-VariousEnchantments uses Maven to compile and build the plugin. Run `maven package` in your IDE to build the jar. The plugin jar will be located in folder `target` when finished.
+This plugin is compatible with Spigot. Using CraftBukkit will not work. The versions of Minecraft that are currently supported are 1.19 - 1.20.1.

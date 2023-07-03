@@ -16,7 +16,8 @@ public class MenuManagerSystem {
             if (itemInInventory != null && (EnchantmentTarget.ARMOR.includes(itemInInventory) ||
                     EnchantmentTarget.WEAPON.includes(itemInInventory) ||
                     EnchantmentTarget.BOW.includes(itemInInventory) ||
-                    EnchantmentTarget.TOOL.includes(itemInInventory))) {
+                    EnchantmentTarget.TOOL.includes(itemInInventory) ||
+                    EnchantmentTarget.WEARABLE.includes(itemInInventory))) {
                 itemsInInventory.add(itemInInventory);
             }
         }

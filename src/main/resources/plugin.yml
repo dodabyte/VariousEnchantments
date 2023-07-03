@@ -1,10 +1,7 @@
 name: VariousEnchantments
 version: '${project.version}'
 main: ru.dodabyte.variousenchantments.VariousEnchantmentsMain
-api-version: 1.19
-authors: [ dodabyte ]
-description: The plugin adds many new enchantments to weapons and tools.
-website: https://github.com/dodabyte
+api-version: '1.20'
 commands:
   variousenchantments:
     aliases:

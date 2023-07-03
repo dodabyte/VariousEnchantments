@@ -3,44 +3,44 @@ package ru.dodabyte.variousenchantments.enchantments;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.inventory.ItemStack;
+import ru.dodabyte.variousenchantments.utils.config.Configurations;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class VariousEnchantment {
-
-    private static final String[] NUMERALS = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
-
     private static final List<Enchantment> enchantments = new ArrayList<>();
-
     private static final List<Enchantment> registeredEnchantments = new ArrayList<>();
 
-    // TODO сделать конфиг в ресурсах с таргетами и зачарами, а также уровни
-
     // Weapon enchantments
-    public static Enchantment BLEEDING = new VariousEnchantmentWrapper("bleeding", 3, EnchantmentTarget.WEAPON);
-    public static Enchantment SPECTRAL = new VariousEnchantmentWrapper("spectral", 1, EnchantmentTarget.WEAPON);
-    public static Enchantment BEHEADING = new VariousEnchantmentWrapper("beheading", 3, EnchantmentTarget.WEAPON);
-    public static Enchantment DAZE = new VariousEnchantmentWrapper("daze", 3, EnchantmentTarget.WEAPON);
+    public static Enchantment BLEEDING = new VariousEnchantmentWrapper("bleeding", EnchantmentTarget.WEAPON);
+    public static Enchantment SPECTRAL = new VariousEnchantmentWrapper("spectral", EnchantmentTarget.WEAPON);
+    public static Enchantment BEHEADING = new VariousEnchantmentWrapper("beheading", EnchantmentTarget.WEAPON);
+    public static Enchantment DAZE = new VariousEnchantmentWrapper("daze", EnchantmentTarget.WEAPON);
 
     // Tool enchantments
-    public static Enchantment HOOK = new VariousEnchantmentWrapper("hook", 1, EnchantmentTarget.TOOL, "HOE");
+    public static Enchantment HOOK = new VariousEnchantmentWrapper("hook", EnchantmentTarget.TOOL, "HOE");
+    public static Enchantment MAGNETISM = new VariousEnchantmentWrapper("magnetism", EnchantmentTarget.TOOL);
 
     // Bow enchantments
-    public static Enchantment ENDER = new VariousEnchantmentWrapper("ender", 1, EnchantmentTarget.BOW);
-    public static Enchantment EXPLOSION = new VariousEnchantmentWrapper("explosion", 3, EnchantmentTarget.BOW);
-    public static Enchantment LIGHTNING = new VariousEnchantmentWrapper("lightning", 1, EnchantmentTarget.BOW);
+    public static Enchantment ENDER = new VariousEnchantmentWrapper("ender", EnchantmentTarget.BOW);
+    public static Enchantment EXPLOSION = new VariousEnchantmentWrapper("explosion", EnchantmentTarget.BOW);
+    public static Enchantment LIGHTNING = new VariousEnchantmentWrapper("lightning", EnchantmentTarget.BOW);
+    public static Enchantment POISON_CLOUD = new VariousEnchantmentWrapper("poison_cloud", EnchantmentTarget.BOW);
+    public static Enchantment FREEZING = new VariousEnchantmentWrapper("freezing", EnchantmentTarget.BOW);
 
     // Boots enchantments
-    public static Enchantment JUMPING = new VariousEnchantmentWrapper("jumping", 3, EnchantmentTarget.ARMOR_FEET);
-    public static Enchantment SPEED = new VariousEnchantmentWrapper("speed", 3, EnchantmentTarget.ARMOR_FEET);
+    public static Enchantment JUMPING = new VariousEnchantmentWrapper("jumping", EnchantmentTarget.ARMOR_FEET);
+    public static Enchantment SPEED = new VariousEnchantmentWrapper("speed", EnchantmentTarget.ARMOR_FEET);
 
     // Chestplate enchantments
-    public static Enchantment HEAL = new VariousEnchantmentWrapper("heal", 1, EnchantmentTarget.ARMOR_TORSO);
+    public static Enchantment HEAL = new VariousEnchantmentWrapper("heal", EnchantmentTarget.ARMOR_TORSO);
+
+    // Shield enchantments
+    public static Enchantment THUNDERCLAP = new VariousEnchantmentWrapper("thunderclap", EnchantmentTarget.WEARABLE,
+            "SHIELD");
+    public static Enchantment SHIELD_BASH = new VariousEnchantmentWrapper("shield_bash", EnchantmentTarget.WEARABLE,
+            "SHIELD");
 
     public static void addEnchantments() {
         if (getEnchantments().size() > 0) return;
@@ -50,23 +50,30 @@ public class VariousEnchantment {
                 BEHEADING,
                 DAZE,
                 HOOK,
+                MAGNETISM,
                 ENDER,
                 EXPLOSION,
                 LIGHTNING,
+                POISON_CLOUD,
+                FREEZING,
+                HEAL,
                 JUMPING,
                 SPEED,
-                HEAL
+                THUNDERCLAP,
+                SHIELD_BASH
         ));
     }
 
     public static void registerEnchantments() {
         for (Enchantment enchantment : getEnchantments()) {
             try {
-                Field field = Enchantment.class.getDeclaredField("acceptingNew");
-                field.setAccessible(true);
-                field.set(null, true);
-                Enchantment.registerEnchantment(enchantment);
-                getRegisteredEnchantments().add(enchantment);
+                if (Configurations.getConfig().isEnableEnchantment(enchantment.getKey().getKey())) {
+                    Field field = Enchantment.class.getDeclaredField("acceptingNew");
+                    field.setAccessible(true);
+                    field.set(null, true);
+                    Enchantment.registerEnchantment(enchantment);
+                    getRegisteredEnchantments().add(enchantment);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,8 +88,12 @@ public class VariousEnchantment {
         return registeredEnchantments;
     }
 
+    public static boolean isRegisteredEnchantment(Enchantment enchantment) {
+        return getRegisteredEnchantments().contains(enchantment);
+    }
+
     public static Enchantment getVariousEnchantment(Enchantment enchant) {
-        for(Enchantment enchantment: enchantments)
+        for (Enchantment enchantment: getRegisteredEnchantments())
             if (enchant == enchantment) return enchantment;
         return null;
     }
@@ -113,16 +124,5 @@ public class VariousEnchantment {
                 }
             }
         } catch (Exception ignored) { }
-    }
-
-    public static String getEnchantmentFullName(Enchantment enchantment, int enchantmentLevel){
-        if(enchantmentLevel == 1 && enchantment.getMaxLevel() == 1){
-            return enchantment.getName();
-        }
-        if(enchantmentLevel > 10 || enchantmentLevel <= 0){
-            return enchantment.getName() + " enchantment.level." + enchantmentLevel;
-        }
-
-        return enchantment.getName() + " " + NUMERALS[enchantmentLevel- 1];
     }
 }

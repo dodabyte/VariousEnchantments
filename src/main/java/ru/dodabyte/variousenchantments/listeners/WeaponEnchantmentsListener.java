@@ -6,9 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import ru.dodabyte.variousenchantments.enchantments.VariousEnchantmentActions;
+import ru.dodabyte.variousenchantments.tasks.BleedOut;
 
 public class WeaponEnchantmentsListener implements Listener {
 
@@ -36,10 +38,11 @@ public class WeaponEnchantmentsListener implements Listener {
     // Cancellation of bleeding when snacking on food.
     @EventHandler
     public void onPlayerEating(PlayerItemConsumeEvent event) {
-        if (VariousEnchantmentActions.bleedOutPlayers.size() > 0 &&
-                !VariousEnchantmentActions.bleedOutPlayers.get(event.getPlayer().getUniqueId()).isCancelled()) {
-            VariousEnchantmentActions.bleedOutPlayers.get(event.getPlayer().getUniqueId()).cancel();
-            VariousEnchantmentActions.bleedOutPlayers.remove(event.getPlayer().getUniqueId());
+        if (VariousEnchantmentActions.bleedOutEntities.size() > 0 &&
+                VariousEnchantmentActions.bleedOutEntities.containsKey(event.getPlayer().getUniqueId()) &&
+                !VariousEnchantmentActions.bleedOutEntities.get(event.getPlayer().getUniqueId()).isCancelled()) {
+            VariousEnchantmentActions.bleedOutEntities.get(event.getPlayer().getUniqueId()).cancel();
+            VariousEnchantmentActions.bleedOutEntities.remove(event.getPlayer().getUniqueId());
         }
     }
 }

@@ -1,28 +1,29 @@
 package ru.dodabyte.variousenchantments.actions;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.Particle;
 
 import java.util.Objects;
 
-public class TeleportArrow implements Arrow {
+public class HookArrow implements Arrow {
     private final org.bukkit.entity.Arrow arrow;
-    private final LivingEntity entity;
+    private final Location startLocation;
+    private final int distance;
 
-    public TeleportArrow(org.bukkit.entity.Arrow arrow, LivingEntity entity) {
+    public HookArrow(org.bukkit.entity.Arrow arrow, Location startLocation, int distance) {
         this.arrow = arrow;
-        this.entity = entity;
+        this.startLocation = startLocation;
+        this.distance = distance;
     }
 
     @Override
     public void handle() {
         if (arrow != null) {
-            entity.setGliding(true);
-            Location arrowLocation = arrow.getLocation();
-            arrowLocation.setYaw(arrowLocation.getYaw() * (-1));
-            arrowLocation.setPitch(arrowLocation.getPitch() * (-1));
-            entity.teleport(arrowLocation);
+            arrow.getWorld().spawnParticle(Particle.CRIT, arrow.getLocation(), 1);
+            if (startLocation.distance(arrow.getLocation()) >= distance) {
+                arrow.remove();
+                CustomArrows.getArrowMap().remove(arrow.getUniqueId());
+            }
         }
     }
 
@@ -30,7 +31,7 @@ public class TeleportArrow implements Arrow {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        TeleportArrow that = (TeleportArrow) object;
+        HookArrow that = (HookArrow) object;
         return Objects.equals(arrow.getUniqueId(), that.arrow.getUniqueId());
     }
 

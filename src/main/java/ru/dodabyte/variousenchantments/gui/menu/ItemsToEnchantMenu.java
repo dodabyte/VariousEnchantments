@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.dodabyte.variousenchantments.gui.MenuManagerSystem;
 import ru.dodabyte.variousenchantments.gui.PaginatedMenu;
+import ru.dodabyte.variousenchantments.utils.ChatUtils;
+import ru.dodabyte.variousenchantments.utils.config.Configurations;
 
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class ItemsToEnchantMenu extends PaginatedMenu {
 
     @Override
     public void handleMenu(InventoryClickEvent event) {
-        if (event.getInventory().equals(this.getInventory())) {
+        if (event.getClickedInventory().equals(this.getInventory())) {
             Player player = (Player) event.getWhoClicked();
 
             List<ItemStack> items = MenuManagerSystem.getPlayerItems(player);
@@ -38,7 +40,7 @@ public class ItemsToEnchantMenu extends PaginatedMenu {
             ItemStack clickedItem = event.getCurrentItem();
             if (event.getCurrentItem() != null && (EnchantmentTarget.WEAPON.includes(clickedItem) ||
                     EnchantmentTarget.ARMOR.includes(clickedItem) || EnchantmentTarget.BOW.includes(clickedItem) ||
-                    EnchantmentTarget.TOOL.includes(clickedItem))) {
+                    EnchantmentTarget.TOOL.includes(clickedItem) || EnchantmentTarget.WEARABLE.includes(clickedItem))) {
                 new EnchantmentsMenu(player, clickedItem).open();
             } else if (event.getCurrentItem().getType().equals(Material.BARRIER)) {
                 player.closeInventory();
@@ -46,7 +48,7 @@ public class ItemsToEnchantMenu extends PaginatedMenu {
                 if (ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName())
                         .equalsIgnoreCase("Left")) {
                     if (page == 0) {
-                        player.sendMessage(ChatColor.GRAY + "You are already on the first page.");
+                        ChatUtils.printError(player, Configurations.getLanguage().translate("error.first_page_inventory"));
                     } else {
                         page = page - 1;
                         super.open();
@@ -57,7 +59,7 @@ public class ItemsToEnchantMenu extends PaginatedMenu {
                         page = page + 1;
                         super.open();
                     } else {
-                        player.sendMessage(ChatColor.GRAY + "You are on the last page.");
+                        ChatUtils.printError(player, Configurations.getLanguage().translate("error.last_page_inventory"));
                     }
                 }
             }

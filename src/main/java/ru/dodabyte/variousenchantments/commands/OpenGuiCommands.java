@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ru.dodabyte.variousenchantments.VariousEnchantmentsMain;
 import ru.dodabyte.variousenchantments.gui.menu.ItemsToEnchantMenu;
-import ru.dodabyte.variousenchantments.utils.CommandUtils;
+import ru.dodabyte.variousenchantments.utils.ChatUtils;
 import ru.dodabyte.variousenchantments.utils.config.Configurations;
 
 import java.util.Objects;
@@ -26,18 +26,7 @@ public class OpenGuiCommands implements CommandExecutor {
             return true;
         }
 
-        if (args.length > 0) {
-            StringBuilder enteredCommand = new StringBuilder("/" + label);
-            for (String arg : args) {
-                enteredCommand.append(" ").append(arg);
-            }
-            String here = ChatColor.ITALIC + "HERE";
-            enteredCommand.append("<--[").append(here).append("]");
-            CommandUtils.printError(player,
-                    Configurations.getLanguage().translate("errors.invalid_argument")
-                    + "\n" + enteredCommand);
-            return true;
-        }
+        if (ChatUtils.checkInvalidArgument(args, label, 0, player)) return true;
 
         new ItemsToEnchantMenu(player).open();
 

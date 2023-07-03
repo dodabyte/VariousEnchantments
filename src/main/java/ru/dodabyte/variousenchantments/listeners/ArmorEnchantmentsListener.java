@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArmorEnchantmentsListener implements Listener {
-
     public static List<Player> playersList = new ArrayList<>();
     public static List<LivingEntity> mobsList = new ArrayList<>();
 
@@ -30,6 +29,9 @@ public class ArmorEnchantmentsListener implements Listener {
             }
         }
         for (LivingEntity mob : mobsList) {
+            if (mob.getEquipment().getChestplate() != null) {
+                VariousEnchantmentActions.createChestplateActions(mob, mob.getEquipment().getChestplate());
+            }
             if (mob.getEquipment().getBoots() != null) {
                 VariousEnchantmentActions.createBootsActions(mob, mob.getEquipment().getBoots());
             }

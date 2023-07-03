@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import ru.dodabyte.variousenchantments.VariousEnchantmentsMain;
 import ru.dodabyte.variousenchantments.enchantments.VariousEnchantment;
-import ru.dodabyte.variousenchantments.utils.CommandUtils;
+import ru.dodabyte.variousenchantments.utils.ChatUtils;
 import ru.dodabyte.variousenchantments.utils.EnchantmentUtils;
 import ru.dodabyte.variousenchantments.utils.config.Configurations;
 
@@ -31,60 +31,54 @@ public class EnchantmentCommands implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            CommandUtils.printEnchantmentsList(player);
-            CommandUtils.printError(player, Configurations.getLanguage().translate("errors.enter_name_enchantment"));
+            ChatUtils.printEnchantmentsList(player);
+            ChatUtils.printError(player, Configurations.getLanguage().translate("error.enter_name_enchantment"));
             return true;
         }
+        if (args.length < 2) {
+            ChatUtils.printError(player, Configurations.getLanguage().translate("error.unknown_level_argument"));
+            return true;
+        }
+
+        if (ChatUtils.checkInvalidArgument(args, label, 2, player)) return true;
 
         int level = 1;
         try {
-            if (args.length == 2) {
-                level = Integer.parseInt(args[1]);
-            }
+            level = Integer.parseInt(args[1]);
         }
         catch (NumberFormatException e) {
-            CommandUtils.printError(player, Configurations.getLanguage().translate("errors.unknown_level_argument"));
-        }
-
-        if (args.length > 2) {
-            StringBuilder enteredCommand = new StringBuilder("/" + label);
-            for (String arg : args) {
-                enteredCommand.append(" ").append(arg);
-            }
-            String here = ChatColor.ITALIC + "HERE";
-            enteredCommand.append("<--[").append(here).append("]");
-            CommandUtils.printError(player,
-                    Configurations.getLanguage().translate("errors.invalid_argument")
-                            + ":\n" + enteredCommand);
-            return true;
+            ChatUtils.printError(player, Configurations.getLanguage().translate("error.unknown_level_argument"));
         }
 
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.equals(new ItemStack(Material.AIR))) {
-            CommandUtils.printError(player, Configurations.getLanguage().translate("errors.air_in_main_hand"));
+            ChatUtils.printError(player, Configurations.getLanguage().translate("error.air_in_main_hand"));
             return true;
         }
 
-        for (Enchantment enchantment : VariousEnchantment.getEnchantments()) {
-            if (args[0].equalsIgnoreCase(enchantment.getName())) {
-                if (level > enchantment.getMaxLevel()) {
-                    CommandUtils.printError(player, Configurations.getLanguage().translate("errors.max_level"));
+        for (Enchantment enchantment : VariousEnchantment.getRegisteredEnchantments()) {
+            if (args[0].equalsIgnoreCase(enchantment.getKey().getKey())) {
+                if (level < 1) {
+                    ChatUtils.printError(player, Configurations.getLanguage().translate("error.min_level"));
+                }
+                else if (level > enchantment.getMaxLevel()) {
+                    ChatUtils.printError(player, Configurations.getLanguage().translate("error.max_level"));
                 }
                 else if (!EnchantmentUtils.hasEnchantment(itemInMainHand, enchantment)) {
-                    if (EnchantmentUtils.possibleEnchant(itemInMainHand, enchantment)) {
+                    if (enchantment.canEnchantItem(itemInMainHand)) {
                         EnchantmentUtils.addUnsafeVariousEnchantment(itemInMainHand, enchantment, level);
                     }
                     else {
-                        CommandUtils.printError(player,
-                                Configurations.getLanguage().translate("errors.cannot_enchant"));
+                        ChatUtils.printError(player,
+                                Configurations.getLanguage().translate("error.cannot_enchant"));
                     }
                 }
                 else if (EnchantmentUtils.getLevel(itemInMainHand, enchantment) != level) {
                     EnchantmentUtils.updateUnsafeVariousEnchantment(itemInMainHand, enchantment, level);
                 }
                 else {
-                    CommandUtils.printError(player,
-                            Configurations.getLanguage().translate("errors.already_enchantment_level"));
+                    ChatUtils.printError(player,
+                            Configurations.getLanguage().translate("error.already_enchantment_level"));
                 }
 
                 return true;
@@ -95,7 +89,7 @@ public class EnchantmentCommands implements CommandExecutor {
             }
         }
 
-        CommandUtils.printError(player, Configurations.getLanguage().translate("errors.no_such_enchantments"));
-        return  true;
+        ChatUtils.printError(player, Configurations.getLanguage().translate("error.no_such_enchantment"));
+        return true;
     }
 }
